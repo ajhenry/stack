@@ -36,6 +36,10 @@ Create simple scripts that allow developers to setup projects with minimal effor
 - **Cross Platform Support** - The issue with bash scripts is that they _might_ work on all the common architectures. `stack` provides the promise that it works everywhere
 - **Minimal Time to Contribute** - The less time that a developer has to spend setting up a dev environment, the more they can spend on _actually contributing_
 
+<center>
+⚠️ This project is still very much a work in progress, expect things to break and change often until 1.0 ⚠️
+</center>
+
 ## What it is
 
 Clone, download dependencies, setup environments, and more all in basically one command.
