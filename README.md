@@ -23,8 +23,8 @@
   <a href="#features">Features</a> •
   <a href="#usage">How To Use</a> •
   <a href="#why">Why</a> •
-  <a href="#related">Documentation</a> •
-  <a href="#related">Examples</a> •
+  <a href="#documentation">Documentation</a> •
+  <a href="#examples">Examples</a> •
   <a href="#license">License</a>
 </p>
 
