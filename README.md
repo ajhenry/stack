@@ -36,9 +36,11 @@ Create simple scripts that allow developers to setup projects with minimal effor
 - **Cross Platform Support** - The issue with bash scripts is that they _might_ work on all the common architectures. `stack` provides the promise that it works everywhere
 - **Minimal Time to Contribute** - The less time that a developer has to spend setting up a dev environment, the more they can spend on _actually contributing_
 
+<p align="center">
 <center>
 ⚠️ This project is still very much a work in progress, expect things to break and change often until 1.0 ⚠️
 </center>
+</p>
 
 ## What it is
 
@@ -71,7 +73,7 @@ stack file <.stack file path> <directory> [-d|--debug] [-s|--start]
 This command will bootstrap this project to a folder in your home directory under `stack/`
 
 ```bash
-npx stack repo AJHenry/stack ~/stack
+npx @ajhenry/stack repo AJHenry/stack ~/stack
 ```
 
 ## Why
@@ -104,11 +106,84 @@ These are the methods and when they are executed
 
 > Note that if a step exits with a non 0 command and not listed as an exception, the command will fail and clean up the directory
 
-- `dependency check` - First the scripts checks to make sure the system has the required tools
+- `requires` - **Required** The tools that are required for the install/start steps
 - `install` - **Required** - Steps for installing the program, the entry point
 - `postinstall` - _optional_ - Steps that are run after `install`
+- `postinstallmsg` - _optional_ - Message that is displayed after `postinstall`
 - `start` - _optional_ - Steps for starting the development server
   - Can be ignored when `--start` flag is passed `false`
+
+### Stack File Documentation
+
+```yaml
+# Name of the stack script
+# Optional
+name: Script Name
+
+# Version of the stack generator to use
+# Optional
+version: 0.1.0
+
+# Requires are the list of commands needed for this stack to work
+# Optional
+# Accepts the following types
+#   - string[]
+requires:
+  - git
+  - npm
+  - node
+
+# Requires are the list of commands needed for this stack to work
+# Required
+# Accepts the following types
+#   - string[]
+requires:
+  - git
+
+# Install is a list of commands needed to install the dev environment
+# Required
+# Accepts the following types
+#   - string
+# ---
+#   - cmd: string
+# ---
+#   - message: string
+install:
+  - git clone https://github.com/AJHenry/stack.git .
+  - npm i
+  - npm i -g rimraf
+
+# PostInstall is a list of commands that are run after install
+# Optional
+# Accepts the following types
+#   - string
+# ---
+#   - cmd: string
+# ---
+#   - message: string
+postinstall:
+  - rimraf yarn.lock
+
+
+# PostInstallMsg is a message that prints out after postinstall
+# Optional
+# Accepts the following types
+#   - string
+postinstallmsg: To run a command, use ./bin/run <command>
+
+
+# Start is command that starts the development server
+# Required
+# Accepts the following types
+#   - string
+# ---
+#   - cmd: string
+# ---
+#   - message: string
+start:
+  - yarn link
+  - stack -h
+```
 
 ## Examples
 
@@ -126,14 +201,14 @@ requires:
   - npm
   - git
 
-start:
-  - npm run dev
-
 install:
   - git clone https://github.com/jpedroschmitz/typescript-nextjs-starter.git .
   - npm i
   - npm i tailwindcss@latest postcss@latest autoprefixer@latest
   - npx tailwindcss init -p
+
+start:
+  - npm run dev
 ```
 
 ## License
