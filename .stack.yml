@@ -17,4 +17,4 @@ install:
 
 postinstall:
   - yarn link
-  - message: To use the CLI, you can use the `stack` command
+  - message: To use the CLI, you can use the stack command

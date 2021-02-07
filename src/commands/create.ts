@@ -2,6 +2,8 @@ import { Command, flags } from "@oclif/command";
 import Parser from "../parser";
 import logger from '../logger';
 import  Runner  from '../runner';
+import { join } from 'path';
+import { CWD } from '../constants';
 
 export default class Create extends Command {
   static description = "describe the command here";
@@ -32,6 +34,11 @@ export default class Create extends Command {
       throw new Error("directory is needed")
     }
 
-    const runner = new Runner(stackFile, directory, {overwrite})
+
+    const workingDir = ["~", "/"].includes(directory[0]) ? directory : join(CWD, directory);
+
+    
+
+    const runner = new Runner(stackFile, workingDir, {overwrite})
   }
 }

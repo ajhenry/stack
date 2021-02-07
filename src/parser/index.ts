@@ -22,6 +22,8 @@ export interface Stack {
   name: string;
   version: string;
   install: Step[];
+  postinstall: Step[];
+  start: Step[];
 }
 
 export default class Parser {

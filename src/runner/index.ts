@@ -5,7 +5,7 @@ import cmdExists from "command-exists";
 import logger from "../logger";
 
 interface RunnerOptions {
-  overwrite?: boolean
+  overwrite?: boolean;
 }
 export default class Runner {
   private stack: Stack;
@@ -15,7 +15,7 @@ export default class Runner {
   constructor(stack: Stack, path: string, options?: RunnerOptions) {
     this.stack = stack;
     this.workingDir = path;
-    this.options = options ?? {}
+    this.options = options ?? {};
     this.run();
   }
 
@@ -23,11 +23,20 @@ export default class Runner {
     await this.checkRequires();
     await this.createWorkingDir();
     await this.install();
+    await this.postinstall();
   }
+
 
   async install() {
     logger.silly("Parser:install");
     const steps = this.convertCommands(this.stack.install);
+
+    Promise.all(steps.map(this.executeStep.bind(this)));
+  }
+
+  async postinstall() {
+    logger.silly("Parser:postinstall");
+    const steps = this.convertCommands(this.stack.postinstall);
 
     Promise.all(steps.map(this.executeStep.bind(this)));
   }
@@ -64,40 +73,38 @@ export default class Runner {
     }
   }
 
-  async createWorkingDir () {
+  async createWorkingDir() {
     const pathExists = await fs.pathExists(this.workingDir);
 
-    if(pathExists){
-      if(!this.options.overwrite){
-        logger.error(`Specified path already exists`)
-        throw new Error("Specified path already exists")
-      }else{
-        logger.debug("Deleting working directory since --overwrite is enabled")
+    if (pathExists) {
+      if (!this.options.overwrite) {
+        logger.error(`Specified path already exists`);
+        throw new Error("Specified path already exists");
+      } else {
+        logger.debug("Deleting working directory since --overwrite is enabled");
         //shell.rm("-rf", this.workingDir);
       }
-
-      
     }
 
-    const status =  shell.mkdir("-p", this.workingDir)
-    if(status.code !== 0 ){
-      logger.error("Failed to create specified path")
-      throw new Error("Failed to create path")
+    const status = shell.mkdir("-p", this.workingDir);
+    if (status.code !== 0) {
+      logger.error("Failed to create specified path");
+      throw new Error("Failed to create path");
     }
   }
 
   async executeStep(step: CommandStep): Promise<void> {
-    console.log(this.workingDir)
-    const cdStatus = shell.cd(this.workingDir)
-    if(cdStatus.code !== 0){
+    console.log(this.workingDir);
+    const cdStatus = shell.cd(this.workingDir);
+    if (cdStatus.code !== 0) {
       throw new Error(`Failed to cd into ${this.workingDir}`);
     }
     const status = shell.exec(step.cmd);
 
     if (status.code !== 0) {
-      logger.error(`Failed to execute step`)
-      logger.error(step.cmd)
-      logger.error(`Failed with code ${status.code}`)
+      logger.error(`Failed to execute step`);
+      logger.error(step.cmd);
+      logger.error(`Failed with code ${status.code}`);
       throw new Error(`Failed to execute command`);
     }
   }
