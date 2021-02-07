@@ -6,6 +6,7 @@ import { join } from "path";
 import json from "json5";
 import fs from "fs-extra";
 import { Octokit } from "@octokit/rest";
+import logger from '../logger';
 
 export interface CommandStep {
   cmd: string;
@@ -41,7 +42,7 @@ export default class Parser {
     const fileNames = [".stack", ".stack.yaml", ".stack.yml", ".stack.json"];
     const dir = await find(fileNames, { cwd: process.cwd() });
 
-    console.log(`Found a file at ${dir}`);
+    logger.debug(`Found a file at ${dir}`);
 
     if (!dir) {
       throw new Error("can't find stack file");
@@ -59,17 +60,17 @@ export default class Parser {
 
   private parse(contents: string): Stack {
     let data: Stack | undefined = undefined;
-    console.log(contents)
+    logger.debug(contents)
     try {
       data = yaml.load(contents) as Stack;
     } catch (e) {
-      console.log("failed to parse yaml");
+      logger.debug("failed to parse yaml");
     }
 
     try {
       data = json.parse(contents) as Stack;
     } catch (e) {
-      console.log("failed to parse json");
+      logger.debug("failed to parse json");
     }
 
     if (!data) {
@@ -93,8 +94,8 @@ export default class Parser {
       repo,
     });
 
-    console.log(data);
-    console.log(data.data.default_branch);
+    logger.debug(data);
+    logger.debug(data.data.default_branch);
   }
 
   

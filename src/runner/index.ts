@@ -3,9 +3,11 @@ import shell from "shelljs";
 import fs from "fs-extra";
 import cmdExists from "command-exists";
 import logger from "../logger";
+import Log from 'tslog';
 
 interface RunnerOptions {
   overwrite?: boolean;
+  logLevel?: Log.ILogLevel
 }
 export default class Runner {
   private stack: Stack;
@@ -16,16 +18,23 @@ export default class Runner {
     this.stack = stack;
     this.workingDir = path;
     this.options = options ?? {};
-    this.run();
+    logger.setSettings({
+      minLevel: this.options.logLevel as any ?? "info"
+    })
   }
 
-  async run() {
+  async start() {
     await this.checkRequires();
     await this.createWorkingDir();
-    await this.install();
-    await this.postinstall();
+    try {
+      await this.install();
+      await this.postinstall();
+    } catch (e) {
+      throw e;
+    } finally {
+      this.cleanUp();
+    }
   }
-
 
   async install() {
     logger.silly("Parser:install");
@@ -82,7 +91,7 @@ export default class Runner {
         throw new Error("Specified path already exists");
       } else {
         logger.debug("Deleting working directory since --overwrite is enabled");
-        //shell.rm("-rf", this.workingDir);
+        shell.rm("-rf", this.workingDir);
       }
     }
 
@@ -107,5 +116,12 @@ export default class Runner {
       logger.error(`Failed with code ${status.code}`);
       throw new Error(`Failed to execute command`);
     }
+  }
+
+  cleanUp() {
+    logger.silly("Runner:cleanUp");
+
+    shell.rm("-rf", this.workingDir);
+    logger.info("Cleaned up working directory");
   }
 }

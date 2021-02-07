@@ -20,16 +20,30 @@
 </p> -->
 
 <p align="center">
-  <a href="#key-features">Packages</a> •
+  <a href="#features">Features</a> •
   <a href="#usage">How To Use</a> •
   <a href="#credits">Why</a> •
   <a href="#related">Related</a> •
   <a href="#license">License</a>
 </p>
 
+## Features
+
+Create simple scripts that allow developers to setup projects with minimal effort and without having to refer to the documentation multiple times.
+
+- **Simplicity & Usability** - These are the two most important aspects that stack follows to provide new developers
+- **Cross Platform Support** - The issue with bash scripts is that they _might_ work on all the common architectures. `stack` provides the promise that it works everywhere
+- **Minimal Time to Contribute** - The less time that a developer has to spend setting up a dev environment, the more they can spend on _actually contributing_
+
 ## Usage
 
 ### Install
+
+via npm
+
+```bash
+npm i -g @stack/cli
+```
 
 ### Command 
 
@@ -45,13 +59,13 @@ npx stack start AJHenry/stack ~/stack
 
 ## Why
 
+After contributing to the JS open source community for a bit, I realized how often I had to look up exactly what package manager they were using (npm vs yarn), what other git submodules I needed, what the start command was (start vs dev vs build) for a _simple change in the code_.
+
 I believe there are times where I'd like control over my repo and dev tools rather than having everything handled by Docker.
 
 This handles the work of cloning a repo and installing dev tools as well as starting the dev environment.
 
-After contributing to the JS open source community for a bit, I realized how often I had to look up exactly what package manager they were using (npm vs yarn), what other git submodules I needed, what the start command was (start vs dev vs build).
-
-My solution to this is basically an elegant bash script that can start dev environments dumb fast
+My solution to this is basically an elegant bash script that can start dev environments _dumb_ fast.
 ## What it is
 
 Clone, download dependencies, setup environments, and more all in one command.

@@ -6,7 +6,7 @@
   "bin": {
     "stack": "./bin/run"
   },
-  "bugs": "https://github.com/oclif/example-multi-ts/issues",
+  "bugs": "https://github.com/ajhenry/stack/issues",
   "dependencies": {
     "@oclif/command": "^1",
     "@oclif/config": "^1",
