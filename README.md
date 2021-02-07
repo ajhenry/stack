@@ -36,6 +36,12 @@ Create simple scripts that allow developers to setup projects with minimal effor
 - **Cross Platform Support** - The issue with bash scripts is that they _might_ work on all the common architectures. `stack` provides the promise that it works everywhere
 - **Minimal Time to Contribute** - The less time that a developer has to spend setting up a dev environment, the more they can spend on _actually contributing_
 
+## What it is
+
+Clone, download dependencies, setup environments, and more all in basically one command.
+
+Define bootstrap steps for your project to make setup as simple as possible.
+
 ## Usage
 
 ### Install
@@ -66,7 +72,7 @@ npx stack repo AJHenry/stack ~/stack
 
 ## Why
 
-After contributing to the JS open source community for awhile, I realized how often I had to look up exactly what package manager they were using (npm vs yarn), what other git submodules I needed, what the start command was (start vs dev vs build) for a _simple change in the code_. Not to mention how hard it can be to contribute to large monorepo projects like [react](https://github.com/facebook/react) and [vue](https://github.com/vuejs/vue) since they rely on many scripts to get things up and running.
+After contributing to the JS open source community for awhile, I realized how often I had to look up exactly what package manager they were using (npm vs yarn), what other git submodules I needed, what the start command was (start vs dev vs build) for a _simple change in the code_. Not to mention how hard it can be to setup large monorepo projects like [react](https://github.com/facebook/react) and [vue](https://github.com/vuejs/vue) since they rely on many scripts to get things up and running.
 
 My solution to this is basically an elegant bash script that can start dev environments _dumb_ fast.
 
@@ -76,15 +82,9 @@ Docker can do all this no problem, however I believe there are times where I'd l
 
 ### What about bash scripts?
 
-Bash scripts can also do all this work with some cavets, like leaving the developer to clone the repo, maybe even the submodules. Then you will need to write the bash script for Windows too.
+Bash scripts can also do all this work with some cavets, like leaving the developer to clone the repo, maybe even the submodules too. Then you will need to write the bash script for Windows too.
 
 In fact, I still recommend having bash scripts that bootstrap a lot of the work in the repo. That way they can just be called by stack.
-
-## What it is
-
-Clone, download dependencies, setup environments, and more all in one command.
-
-Define bootstrap steps for your project to make setup as simple as possible.
 
 ## How it works
 

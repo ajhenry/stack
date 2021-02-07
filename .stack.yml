@@ -1,11 +1,10 @@
 ---
-name: Tailwind Next Starter
+name: Stack Project Starter
 version: 0.1
 
 requires: 
   - npm
   - git
-
 
 start:
   - npm run dev
