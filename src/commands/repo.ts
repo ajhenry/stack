@@ -5,9 +5,9 @@ import logger from "../logger";
 import Parser from "../parser";
 import Runner from "../runner";
 
-export default class Start extends Command {
+export default class Repo extends Command {
   static description =
-    "Bootstrap a project via a .stack file and start the dev environment";
+    "Bootstrap a project via a local .stack file and start the dev environment";
 
   static flags = {
     help: flags.help({ char: "h" }),
@@ -33,7 +33,7 @@ export default class Start extends Command {
   ];
 
   async run() {
-    const { args, flags } = this.parse(Start);
+    const { args, flags } = this.parse(Repo);
     const { file, directory } = args;
     const { overwrite, debug } = flags;
 

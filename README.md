@@ -22,8 +22,9 @@
 <p align="center">
   <a href="#features">Features</a> •
   <a href="#usage">How To Use</a> •
-  <a href="#credits">Why</a> •
-  <a href="#related">Related</a> •
+  <a href="#why">Why</a> •
+  <a href="#related">Documentation</a> •
+  <a href="#related">Examples</a> •
   <a href="#license">License</a>
 </p>
 
@@ -31,7 +32,7 @@
 
 Create simple scripts that allow developers to setup projects with minimal effort and without having to refer to the documentation multiple times.
 
-- **Simplicity & Usability** - These are the two most important aspects that stack follows to provide new developers
+- **Simplicity & Usability** - These are the two most important aspects that stack follows to provide developers a better project bootstrap experience
 - **Cross Platform Support** - The issue with bash scripts is that they _might_ work on all the common architectures. `stack` provides the promise that it works everywhere
 - **Minimal Time to Contribute** - The less time that a developer has to spend setting up a dev environment, the more they can spend on _actually contributing_
 
@@ -45,27 +46,40 @@ via npm
 npm i -g @stack/cli
 ```
 
-### Command 
+### Commands
 
 ```bash
-stack [repo name] [directory] [-d|--debug] [-s|--start]
+stack repo <repo name> <directory> [-d|--debug] [-s|--start]
+```
+
+```bash
+stack file <.stack file path> <directory> [-d|--debug] [-s|--start]
 ```
 
 ### Example Usage
 
+This command will bootstrap this project to a folder in your home directory under `stack/`
+
 ```bash
-npx stack start AJHenry/stack ~/stack
+npx stack repo AJHenry/stack ~/stack
 ```
 
 ## Why
 
-After contributing to the JS open source community for a bit, I realized how often I had to look up exactly what package manager they were using (npm vs yarn), what other git submodules I needed, what the start command was (start vs dev vs build) for a _simple change in the code_.
-
-I believe there are times where I'd like control over my repo and dev tools rather than having everything handled by Docker.
-
-This handles the work of cloning a repo and installing dev tools as well as starting the dev environment.
+After contributing to the JS open source community for awhile, I realized how often I had to look up exactly what package manager they were using (npm vs yarn), what other git submodules I needed, what the start command was (start vs dev vs build) for a _simple change in the code_. Not to mention how hard it can be to contribute to large monorepo projects like [react](https://github.com/facebook/react) and [vue](https://github.com/vuejs/vue) since they rely on many scripts to get things up and running.
 
 My solution to this is basically an elegant bash script that can start dev environments _dumb_ fast.
+
+### What about Docker?
+
+Docker can do all this no problem, however I believe there are times where I'd like deeper control over my repo and dev tools rather than having everything abstracted by Docker.
+
+### What about bash scripts?
+
+Bash scripts can also do all this work with some cavets, like leaving the developer to clone the repo, maybe even the submodules. Then you will need to write the bash script for Windows too.
+
+In fact, I still recommend having bash scripts that bootstrap a lot of the work in the repo. That way they can just be called by stack.
+
 ## What it is
 
 Clone, download dependencies, setup environments, and more all in one command.
@@ -76,9 +90,27 @@ Define bootstrap steps for your project to make setup as simple as possible.
 
 A `.stack` is a configuration and build file for a project. stack comes with a CLI that takes this configuration file and uses it to get a dev environment for the project up and running on your machine.
 
-_It can be thought of as a glorified bash init script._
+_It can be thought of as a glorified init script._
 
-## Example `.stack` file
+## Documentation
+
+### Stack Lifecycle
+
+These are the methods and when they are executed
+
+> Note that if a step exits with a non 0 command and not listed as an exception, the command will fail and clean up the directory
+
+- `dependency check` - First the scripts checks to make sure the system has the required tools
+- `install` - **Required** - Steps for installing the program, the entry point
+- `postinstall` - _optional_ - Steps that are run after `install`
+- `start` - _optional_ - Steps for starting the development server
+  - Can be ignored when `--start` flag is passed `false`
+
+## Examples
+
+Here are some examples of .stack files to help you get started
+
+### Example `.stack` file
 
 Here is an example of a stack file that creates a tailwind next starter + server.
 
@@ -99,18 +131,6 @@ install:
   - npm i tailwindcss@latest postcss@latest autoprefixer@latest
   - npx tailwindcss init -p
 ```
-
-## Stack Lifecycle
-
-These are the methods and when they are executed
-
-> Note that if a step exits with a non 0 command and not listed as an exception, the command will fail and clean up the directory
-
-- `dependency check` - First the scripts checks to make sure the system has the required tools
-- `install` - **Required** - Steps for installing the program, the entry point
-- `postinstall` - _optional_ - Steps that are run after `install`
-- `start` - _optional_ - Steps for starting the development server
-  - Can be ignored when `--start` flag is passed `false`
 
 ## License
 
