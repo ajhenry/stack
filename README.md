@@ -66,7 +66,7 @@ $ npm install -g @ajhenry/stack
 $ stack COMMAND
 running command...
 $ stack (-v|--version|version)
-@ajhenry/stack/0.1.0 win32-x64 node-v14.14.0
+@ajhenry/stack/0.1.1 win32-x64 node-v14.14.0
 $ stack --help [COMMAND]
 USAGE
   $ stack COMMAND
@@ -79,7 +79,7 @@ USAGE
 <!-- commands -->
 * [`stack file [FILE] [DIRECTORY]`](#stack-file-file-directory)
 * [`stack help [COMMAND]`](#stack-help-command)
-* [`stack repo [FILE] [DIRECTORY]`](#stack-repo-file-directory)
+* [`stack repo PROJECT [DIRECTORY]`](#stack-repo-project-directory)
 
 ## `stack file [FILE] [DIRECTORY]`
 
@@ -99,7 +99,7 @@ OPTIONS
   -o, --overwrite  Overwrite the specified directory
 ```
 
-_See code: [src/commands/file.ts](https://github.com/ajhenry/stack/blob/v0.1.0/src/commands/file.ts)_
+_See code: [src\commands\file.ts](https://github.com/ajhenry/stack/blob/v0.1.1/src\commands\file.ts)_
 
 ## `stack help [COMMAND]`
 
@@ -116,27 +116,29 @@ OPTIONS
   --all  see all commands in CLI
 ```
 
-_See code: [@oclif/plugin-help](https://github.com/oclif/plugin-help/blob/v3.0.0/src/commands/help.ts)_
+_See code: [@oclif/plugin-help](https://github.com/oclif/plugin-help/blob/v3.0.0/src\commands\help.ts)_
 
-## `stack repo [FILE] [DIRECTORY]`
+## `stack repo PROJECT [DIRECTORY]`
 
 Bootstrap a project via a local .stack file and start the dev environment
 
 ```
 USAGE
-  $ stack repo [FILE] [DIRECTORY]
+  $ stack repo PROJECT [DIRECTORY]
 
 ARGUMENTS
-  FILE       File path to read from
-  DIRECTORY  Directory to install to
+  PROJECT    GitHub project (org/repo) to read the stack file from
+  DIRECTORY  Directory to install to, default is the project's repo name
 
 OPTIONS
-  -d, --debug      Enable debug mode
-  -h, --help       show CLI help
-  -o, --overwrite  Overwrite the specified directory
+  -b, --branch=branch  Branch to use when looking for stack file, default is repo's default
+  -d, --debug          Enable debug mode
+  -h, --help           show CLI help
+  -o, --overwrite      Overwrite the specified directory
+  -p, --path=path      Path to look for stack file in repo
 ```
 
-_See code: [src/commands/repo.ts](https://github.com/ajhenry/stack/blob/v0.1.0/src/commands/repo.ts)_
+_See code: [src\commands\repo.ts](https://github.com/ajhenry/stack/blob/v0.1.1/src\commands\repo.ts)_
 <!-- commandsstop -->
 
 
