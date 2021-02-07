@@ -1,5 +1,5 @@
 {
-  "name": "@stack/cli",
+  "name": "@ajhenry/stack",
   "description": "A CLI to bootstrap dev environments lightning fast ⚡",
   "version": "0.1.0",
   "author": "Andrew Henry <andrew.henry@pitt.edu>",

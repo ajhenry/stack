@@ -53,7 +53,7 @@ Define bootstrap steps for your project to make setup as simple as possible.
 via npm
 
 ```bash
-npm i -g @stack/cli
+npm i -g @ajhenry/stack
 ```
 
 ### Commands
