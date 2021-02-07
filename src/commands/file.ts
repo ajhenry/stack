@@ -56,7 +56,9 @@ export default class File extends Command {
 
       const runner = new Runner(stackFile, workingDir, { overwrite });
       runner.start();
-    } catch {
+    } catch(e) {
+
+      console.log(e)
       this.exit(1);
     }
 

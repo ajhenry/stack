@@ -11,10 +11,19 @@ export default class Repo extends Command {
 
   static flags = {
     help: flags.help({ char: "h" }),
+    branch: flags.string({
+      char: "b",
+      description:
+        "Branch to use when looking for stack file, default is repo's default",
+    }),
     overwrite: flags.boolean({
       char: "o",
       default: false,
       description: "Overwrite the specified directory",
+    }),
+    path: flags.string({
+      char: "p",
+      description: "Path to look for stack file in repo",
     }),
     debug: flags.boolean({
       char: "d",
@@ -24,39 +33,48 @@ export default class Repo extends Command {
   };
 
   static args = [
-    { name: "file", description: "File path to read from", optional: false },
+    {
+      name: "project",
+      description: "GitHub project (org/repo) to read the stack file from",
+      required: true,
+    },
     {
       name: "directory",
-      description: "Directory to install to",
-      optional: false,
+      description:
+        "Directory to install to, default is the project's repo name",
+      optional: true,
     },
   ];
 
   async run() {
     const { args, flags } = this.parse(Repo);
-    const { file, directory } = args;
-    const { overwrite, debug } = flags;
+    const { project, directory } = args;
+    const { overwrite, branch, path, debug } = flags;
 
-    if (!directory) {
-      throw new Error("The directory argument is needed");
+    const projectRegex = /([a-z]|[A-Z]|[0-9]|-|_)+\/([a-z]|[A-Z]|[0-9]|-|_)+/g;
+    if (project.match(projectRegex)[0] !== project) {
+      logger.debug(`${project} did not match regex`);
+      throw new Error("Project does not match format `org/repo`");
     }
 
     logger.setSettings({ minLevel: debug ? "debug" : "info" });
 
     try {
-      const parser = new Parser();
-      const stackFile = await parser.readFile(file);
-      logger.debug(stackFile);
-      logger.debug(file);
+      logger.debug(project);
       logger.debug(directory);
+      const parser = new Parser();
+      const stackFile = await parser.readGitHub(project, { branch, path });
+      logger.debug(stackFile);
 
-      const workingDir = ["~", "/"].includes(directory[0])
-        ? directory
-        : join(CWD, directory);
+      const workingDir = directory ?? join(CWD, project.split("/")[1]);
+
+      logger.debug(workingDir)
 
       const runner = new Runner(stackFile, workingDir, { overwrite });
-      runner.start();
-    } catch {
+      await runner.start();
+    } catch (e) {
+      logger.error("Caught an error")
+      logger.error(e);
       this.exit(1);
     }
 

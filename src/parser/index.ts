@@ -1,12 +1,13 @@
 import find from "find-up";
 import yaml from "js-yaml";
-import shell from "shelljs"
-import {withDir} from 'tmp-promise'
-import { join } from "path";
+import shell from "shelljs";
+import { withDir } from "tmp-promise";
+import join from "url-join";
 import json from "json5";
 import fs from "fs-extra";
 import { Octokit } from "@octokit/rest";
-import logger from '../logger';
+import logger from "../logger";
+import axios from "axios";
 
 export interface CommandStep {
   cmd: string;
@@ -29,6 +30,7 @@ export interface Stack {
 
 export default class Parser {
   private stack?: Stack;
+  private stackFiles = [".stack", ".stack.yaml", ".stack.yml", ".stack.json"];
 
   constructor() {}
 
@@ -39,8 +41,7 @@ export default class Parser {
       return;
     }
 
-    const fileNames = [".stack", ".stack.yaml", ".stack.yml", ".stack.json"];
-    const dir = await find(fileNames, { cwd: process.cwd() });
+    const dir = await find(this.stackFiles, { cwd: process.cwd() });
 
     logger.debug(`Found a file at ${dir}`);
 
@@ -60,7 +61,7 @@ export default class Parser {
 
   private parse(contents: string): Stack {
     let data: Stack | undefined = undefined;
-    logger.debug(contents)
+    logger.debug(contents);
     try {
       data = yaml.load(contents) as Stack;
     } catch (e) {
@@ -86,7 +87,7 @@ export default class Parser {
     return this.stack!;
   }
 
-  async readGitHubRepo(project: string): Promise<any> {
+  async getDefaultBranch(project: string): Promise<any> {
     const [owner, repo] = project.split("/");
     const gh = new Octokit();
     const data = await gh.repos.get({
@@ -94,20 +95,64 @@ export default class Parser {
       repo,
     });
 
-    logger.debug(data);
-    logger.debug(data.data.default_branch);
+    return data.data.default_branch;
   }
 
-  
-
-  async generateGitHubLinks(project: string): Promise<any> {
+  async generateGitHubLink(
+    project: string,
+    branch?: string,
+    path?: string
+  ): Promise<string> {
     const links = project.split("/");
-    const githubUrl = `https://raw.githubusercontent.com/${links[0]}/${links[1]}/master/.stack`;
+    const githubUrlBase = `https://raw.githubusercontent.com/${links[0]}/${links[1]}/`;
+
+    const githubUrlBranch = join(
+      githubUrlBase,
+      branch ?? (await this.getDefaultBranch(project))
+    );
+
+    for (const file of this.stackFiles) {
+      const githubUrlPath = join(githubUrlBranch, path ?? file);
+
+      logger.debug(`Checking ${githubUrlPath}`);
+
+      const data = await this.readGitHubFile(githubUrlPath);
+
+      logger.debug(`data: ${data}`);
+
+      if (data) return data;
+    }
+
+    throw new Error("Unable to find a stack file within that project");
   }
 
-  async readGitHub(project?: string): Promise<Stack> {
-    await this.find(project);
+  async readGitHubFile(url: string): Promise<string | undefined> {
+    const res = await axios
+      .get(url)
+      .then((data) => {
+        return data.data;
+      })
+      .catch((err) => {
+        logger.debug("Threw an error in readGitHubFile");
+        logger.debug(`Error code: ${err.response.status}`);
+        return undefined;
+      });
 
-    return this.stack!;
+    return res;
+  }
+
+  async readGitHub(
+    project: string,
+    options?: { branch?: string; path?: string }
+  ): Promise<any> {
+    const data = await this.generateGitHubLink(
+      project,
+      options?.branch,
+      options?.path
+    );
+
+    const stackFile = this.parse(data);
+
+    return stackFile;
   }
 }

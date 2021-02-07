@@ -24,6 +24,7 @@ export default class Runner {
   }
 
   async start() {
+    logger.debug("Runner:start")
     await this.checkRequires();
     await this.createWorkingDir();
     try {

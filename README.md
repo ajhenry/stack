@@ -54,19 +54,91 @@ Define bootstrap steps for your project to make setup as simple as possible.
 
 via npm
 
-```bash
+```sh-session
 npm i -g @ajhenry/stack
 ```
 
+Example
+
+<!-- usage -->
+```sh-session
+$ npm install -g @ajhenry/stack
+$ stack COMMAND
+running command...
+$ stack (-v|--version|version)
+@ajhenry/stack/0.1.0 win32-x64 node-v14.14.0
+$ stack --help [COMMAND]
+USAGE
+  $ stack COMMAND
+...
+```
+<!-- usagestop -->
+
 ### Commands
 
-```bash
-stack repo <repo name> <directory> [-d|--debug] [-s|--start]
+<!-- commands -->
+* [`stack file [FILE] [DIRECTORY]`](#stack-file-file-directory)
+* [`stack help [COMMAND]`](#stack-help-command)
+* [`stack repo [FILE] [DIRECTORY]`](#stack-repo-file-directory)
+
+## `stack file [FILE] [DIRECTORY]`
+
+Bootstrap a project via a local .stack file and start the dev environment
+
+```
+USAGE
+  $ stack file [FILE] [DIRECTORY]
+
+ARGUMENTS
+  FILE       File path to read from
+  DIRECTORY  Directory to install to
+
+OPTIONS
+  -d, --debug      Enable debug mode
+  -h, --help       show CLI help
+  -o, --overwrite  Overwrite the specified directory
 ```
 
-```bash
-stack file <.stack file path> <directory> [-d|--debug] [-s|--start]
+_See code: [src/commands/file.ts](https://github.com/ajhenry/stack/blob/v0.1.0/src/commands/file.ts)_
+
+## `stack help [COMMAND]`
+
+display help for stack
+
 ```
+USAGE
+  $ stack help [COMMAND]
+
+ARGUMENTS
+  COMMAND  command to show help for
+
+OPTIONS
+  --all  see all commands in CLI
+```
+
+_See code: [@oclif/plugin-help](https://github.com/oclif/plugin-help/blob/v3.0.0/src/commands/help.ts)_
+
+## `stack repo [FILE] [DIRECTORY]`
+
+Bootstrap a project via a local .stack file and start the dev environment
+
+```
+USAGE
+  $ stack repo [FILE] [DIRECTORY]
+
+ARGUMENTS
+  FILE       File path to read from
+  DIRECTORY  Directory to install to
+
+OPTIONS
+  -d, --debug      Enable debug mode
+  -h, --help       show CLI help
+  -o, --overwrite  Overwrite the specified directory
+```
+
+_See code: [src/commands/repo.ts](https://github.com/ajhenry/stack/blob/v0.1.0/src/commands/repo.ts)_
+<!-- commandsstop -->
+
 
 ### Example Usage
 
@@ -118,7 +190,7 @@ These are the methods and when they are executed
 ```yaml
 # Name of the stack script
 # Optional
-name: Script Name
+name: Stack Project Starter
 
 # Version of the stack generator to use
 # Optional
@@ -131,7 +203,6 @@ version: 0.1.0
 requires:
   - git
   - npm
-  - node
 
 # Requires are the list of commands needed for this stack to work
 # Required
@@ -150,8 +221,7 @@ requires:
 #   - message: string
 install:
   - git clone https://github.com/AJHenry/stack.git .
-  - npm i
-  - npm i -g rimraf
+  - yarn
 
 # PostInstall is a list of commands that are run after install
 # Optional
@@ -162,7 +232,7 @@ install:
 # ---
 #   - message: string
 postinstall:
-  - rimraf yarn.lock
+  - yarn link
 
 
 # PostInstallMsg is a message that prints out after postinstall
@@ -181,7 +251,6 @@ postinstallmsg: To run a command, use ./bin/run <command>
 # ---
 #   - message: string
 start:
-  - yarn link
   - stack -h
 ```
 
