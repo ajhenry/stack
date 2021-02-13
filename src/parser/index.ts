@@ -8,6 +8,7 @@ import fs from "fs-extra";
 import { Octokit } from "@octokit/rest";
 import logger from "../logger";
 import axios from "axios";
+import { npmStart } from "../stacks";
 
 export interface CommandStep {
   cmd: string;
@@ -27,6 +28,8 @@ export interface Stack {
   postinstall: Step[];
   start: Step[];
 }
+
+export type commonStacks = "npm-start" | "yarn-start";
 
 export default class Parser {
   private stack?: Stack;
@@ -51,6 +54,25 @@ export default class Parser {
 
     const contents = await this.read(dir);
     this.stack = this.parse(contents);
+  }
+
+  async useCommonStack(
+    project: string,
+    commonType: commonStacks
+  ): Promise<Stack> {
+    logger.debug(`Using common stack: ${commonType}`);
+
+    if (commonType === "npm-start") {
+      const stackFile = npmStart(project, false);
+      return this.parse(stackFile);
+    }
+
+    if (commonType === "yarn-start") {
+      const stackFile = npmStart(project, true);
+      return this.parse(stackFile);
+    }
+
+    throw new Error(`Not a supported common stack: ${commonType}`);
   }
 
   private async read(file: string): Promise<string> {
@@ -144,7 +166,7 @@ export default class Parser {
   async readGitHub(
     project: string,
     options?: { branch?: string; path?: string }
-  ): Promise<any> {
+  ): Promise<Stack> {
     const data = await this.generateGitHubLink(
       project,
       options?.branch,

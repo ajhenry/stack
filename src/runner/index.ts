@@ -3,11 +3,12 @@ import shell from "shelljs";
 import fs from "fs-extra";
 import cmdExists from "command-exists";
 import logger from "../logger";
-import Log from 'tslog';
+import Log from "tslog";
+import { CWD } from "../constants";
 
 interface RunnerOptions {
   overwrite?: boolean;
-  logLevel?: Log.ILogLevel
+  logLevel?: Log.ILogLevel;
 }
 export default class Runner {
   private stack: Stack;
@@ -19,12 +20,12 @@ export default class Runner {
     this.workingDir = path;
     this.options = options ?? {};
     logger.setSettings({
-      minLevel: this.options.logLevel as any ?? "info"
-    })
+      minLevel: (this.options.logLevel as any) ?? "info",
+    });
   }
 
   async start() {
-    logger.debug("Runner:start")
+    logger.debug("Runner:start");
     await this.checkRequires();
     await this.createWorkingDir();
     try {
@@ -47,6 +48,8 @@ export default class Runner {
   async postinstall() {
     logger.silly("Parser:postinstall");
     const steps = this.convertCommands(this.stack.postinstall);
+
+    if (!steps) return;
 
     Promise.all(steps.map(this.executeStep.bind(this)));
   }
@@ -121,7 +124,7 @@ export default class Runner {
 
   cleanUp() {
     logger.silly("Runner:cleanUp");
-
+    shell.cd(CWD);
     shell.rm("-rf", this.workingDir);
     logger.info("Cleaned up working directory");
   }

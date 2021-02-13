@@ -2,7 +2,7 @@ import { Command, flags } from "@oclif/command";
 import { join } from "path";
 import { CWD } from "../constants";
 import logger from "../logger";
-import Parser from "../parser";
+import Parser, { commonStacks, Stack } from "../parser";
 import Runner from "../runner";
 
 export default class Repo extends Command {
@@ -30,6 +30,10 @@ export default class Repo extends Command {
       default: false,
       description: "Enable debug mode",
     }),
+    common: flags.string({
+      char: "c",
+      description: "Select a common utility to use to start the project",
+    }),
   };
 
   static args = [
@@ -49,7 +53,7 @@ export default class Repo extends Command {
   async run() {
     const { args, flags } = this.parse(Repo);
     const { project, directory } = args;
-    const { overwrite, branch, path, debug } = flags;
+    const { overwrite, branch, path, debug, common } = flags;
 
     const projectRegex = /([a-z]|[A-Z]|[0-9]|-|_)+\/([a-z]|[A-Z]|[0-9]|-|_)+/g;
     if (project.match(projectRegex)[0] !== project) {
@@ -63,17 +67,26 @@ export default class Repo extends Command {
       logger.debug(project);
       logger.debug(directory);
       const parser = new Parser();
-      const stackFile = await parser.readGitHub(project, { branch, path });
+
+      let stackFile: Stack;
+      if (common) {
+        stackFile = await parser.useCommonStack(
+          project,
+          common as commonStacks
+        );
+      } else {
+        stackFile = await parser.readGitHub(project, { branch, path });
+      }
       logger.debug(stackFile);
 
       const workingDir = directory ?? join(CWD, project.split("/")[1]);
 
-      logger.debug(workingDir)
+      logger.debug(workingDir);
 
       const runner = new Runner(stackFile, workingDir, { overwrite });
       await runner.start();
     } catch (e) {
-      logger.error("Caught an error")
+      logger.error("Caught an error");
       logger.error(e);
       this.exit(1);
     }
