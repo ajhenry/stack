@@ -206,13 +206,6 @@ requires:
   - git
   - npm
 
-# Requires are the list of commands needed for this stack to work
-# Required
-# Accepts the following types
-#   - string[]
-requires:
-  - git
-
 # Install is a list of commands needed to install the dev environment
 # Required
 # Accepts the following types
@@ -254,6 +247,24 @@ postinstallmsg: To run a command, use ./bin/run <command>
 #   - message: string
 start:
   - stack -h
+```
+
+### Using common stacks
+
+If a project doesn't have a stack file defined for it, you can use built in stack files that represent common patterns for getting projects up and running
+
+
+Supported common stacks
+
+- npm-start
+- yarn-start
+
+You can use the `--common|-c` flag to pass in a common stack
+
+#### Example npm start Command
+
+```bash
+stack repo AJHenry/serverless-workshop --common npm-start
 ```
 
 ## Examples

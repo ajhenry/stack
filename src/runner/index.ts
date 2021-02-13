@@ -9,6 +9,7 @@ import { CWD } from "../constants";
 interface RunnerOptions {
   overwrite?: boolean;
   logLevel?: Log.ILogLevel;
+  start?: boolean;
 }
 export default class Runner {
   private stack: Stack;
@@ -24,28 +25,39 @@ export default class Runner {
     });
   }
 
-  async start() {
-    logger.debug("Runner:start");
+  async run(): Promise<void> {
+    logger.debug("Runner:run");
     await this.checkRequires();
     await this.createWorkingDir();
     try {
       await this.install();
       await this.postinstall();
+      if (this.options.start) {
+        await this.start();
+      }
     } catch (e) {
-      throw e;
-    } finally {
       this.cleanUp();
+      throw e;
     }
   }
 
-  async install() {
+  async install(): Promise<void> {
     logger.silly("Parser:install");
     const steps = this.convertCommands(this.stack.install);
 
     Promise.all(steps.map(this.executeStep.bind(this)));
   }
 
-  async postinstall() {
+  async start(): Promise<void> {
+    logger.silly("Parser:start");
+    const steps = this.convertCommands(this.stack.start);
+
+    if (!steps) return;
+
+    Promise.all(steps.map(this.executeStep.bind(this)));
+  }
+
+  async postinstall(): Promise<void> {
     logger.silly("Parser:postinstall");
     const steps = this.convertCommands(this.stack.postinstall);
 
@@ -55,6 +67,7 @@ export default class Runner {
   }
 
   convertCommands(steps: Step[]): CommandStep[] {
+    logger.debug("Parser:convertCommands");
     function convert(step: Step) {
       if (typeof step === "string") {
         return {
@@ -69,10 +82,12 @@ export default class Runner {
       return step as CommandStep;
     }
 
+    if (!steps) return steps;
+
     return steps.map(convert);
   }
 
-  async checkRequires() {
+  async checkRequires(): Promise<void> {
     logger.debug("checkRequires");
     for (const tool of this.stack.requires) {
       logger.debug(`Checking if ${tool} is installed`);
@@ -86,7 +101,7 @@ export default class Runner {
     }
   }
 
-  async createWorkingDir() {
+  async createWorkingDir(): Promise<void> {
     const pathExists = await fs.pathExists(this.workingDir);
 
     if (pathExists) {

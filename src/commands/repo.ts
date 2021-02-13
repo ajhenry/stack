@@ -34,6 +34,11 @@ export default class Repo extends Command {
       char: "c",
       description: "Select a common utility to use to start the project",
     }),
+    start: flags.boolean({
+      char: "s",
+      default: true,
+      description: "Flag for starting the dev environment",
+    }),
   };
 
   static args = [
@@ -53,7 +58,7 @@ export default class Repo extends Command {
   async run() {
     const { args, flags } = this.parse(Repo);
     const { project, directory } = args;
-    const { overwrite, branch, path, debug, common } = flags;
+    const { overwrite, branch, path, debug, common, start } = flags;
 
     const projectRegex = /([a-z]|[A-Z]|[0-9]|-|_)+\/([a-z]|[A-Z]|[0-9]|-|_)+/g;
     if (project.match(projectRegex)[0] !== project) {
@@ -83,8 +88,8 @@ export default class Repo extends Command {
 
       logger.debug(workingDir);
 
-      const runner = new Runner(stackFile, workingDir, { overwrite });
-      await runner.start();
+      const runner = new Runner(stackFile, workingDir, { overwrite, start });
+      await runner.run();
     } catch (e) {
       logger.error("Caught an error");
       logger.error(e);
