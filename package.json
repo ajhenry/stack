@@ -1,7 +1,7 @@
 {
   "name": "@ajhenry/stack",
   "description": "A CLI to bootstrap dev environments lightning fast ⚡",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "author": "Andrew Henry <andrew.henry@pitt.edu>",
   "bin": {
     "stack": "./bin/run"

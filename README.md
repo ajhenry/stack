@@ -66,7 +66,7 @@ $ npm install -g @ajhenry/stack
 $ stack COMMAND
 running command...
 $ stack (-v|--version|version)
-@ajhenry/stack/0.1.1 win32-x64 node-v14.14.0
+@ajhenry/stack/0.2.0 win32-x64 node-v14.14.0
 $ stack --help [COMMAND]
 USAGE
   $ stack COMMAND
@@ -99,7 +99,7 @@ OPTIONS
   -o, --overwrite  Overwrite the specified directory
 ```
 
-_See code: [src\commands\file.ts](https://github.com/ajhenry/stack/blob/v0.1.1/src\commands\file.ts)_
+_See code: [src\commands\file.ts](https://github.com/ajhenry/stack/blob/v0.2.0/src\commands\file.ts)_
 
 ## `stack help [COMMAND]`
 
@@ -132,13 +132,15 @@ ARGUMENTS
 
 OPTIONS
   -b, --branch=branch  Branch to use when looking for stack file, default is repo's default
+  -c, --common=common  Select a common utility to use to start the project
   -d, --debug          Enable debug mode
   -h, --help           show CLI help
   -o, --overwrite      Overwrite the specified directory
   -p, --path=path      Path to look for stack file in repo
+  -s, --start          Flag for starting the dev environment
 ```
 
-_See code: [src\commands\repo.ts](https://github.com/ajhenry/stack/blob/v0.1.1/src\commands\repo.ts)_
+_See code: [src\commands\repo.ts](https://github.com/ajhenry/stack/blob/v0.2.0/src\commands\repo.ts)_
 <!-- commandsstop -->
 
 
